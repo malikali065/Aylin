@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ein Tag mit dir, wenn wir zusammen leben würden</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="../assets/faviconc.png">
+    <style>
+        :root {
+            --primary-color: #f8c8dc; /* Rosa Pastell */
+            --secondary-color: #e0c3fc; /* Lavendel Pastell */
+            --accent-color: #fce0c3; /* Helles Orange Pastell */
+            --text-color: #5a5a5a;
+            --timeline-color: #c3f0fc; /* Helles Blau Pastell */
+            --mint-color: #c3fcd7; /* Mint Pastell */
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: var(--text-color);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Header Styles */
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle-container {
+            display: flex;
+            background-color: #fff;
+            border-radius: 30px;
+            padding: 5px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .toggle-btn {
+            padding: 8px 16px;
+            border: none;
+            background: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--text-color);
+            transition: all 0.3s ease;
+        }
+
+        .toggle-btn.active {
+            background-color: var(--primary-color);
+            color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Landing Page Styles */
+        .landing {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 2rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .landing h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            background: linear-gradient(45deg, #ff79a8, #8c52ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            animation: fadeInDown 1.5s ease;
+        }
+
+        .landing p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1.5s ease;
+            line-height: 1.6;
+        }
+
+        .heart-btn {
+            padding: 12px 28px;
+            background: #fff;
+            color: var(--text-color);
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            animation: pulse 2s infinite;
+        }
+
+        .heart-btn:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+            background: linear-gradient(45deg, #ff79a8, #8c52ff);
+            color: #fff;
+        }
+
+        /* Floating Hearts */
+        .floating-hearts {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .heart {
+            position: absolute;
+            font-size: 1.5rem;
+            animation: floatHeart 10s linear infinite;
+            opacity: 0.6;
+        }
+
+        /* Timeline Section Styles */
+        .timeline-section {
+            min-height: 100vh;
+            padding: 100px 20px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .timeline {
+            position: relative;
+            margin: 0 auto;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            width: 6px;
+            background: linear-gradient(to bottom, var(--primary-color), var(--secondary-color));
+            top: 0;
+            bottom: 0;
+            left: 50px;
+            margin-left: -3px;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .time-container {
+            padding: 10px 40px 10px 70px;
+            position: relative;
+            margin-bottom: 30px;
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease;
+        }
+
+        .time-container.animate {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .time-container::before {
+            content: '';
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #fff;
+            left: 44px;
+            top: 15px;
+            z-index: 1;
+            box-shadow: 0 0 0 4px var(--primary-color), 0 0 0 8px rgba(248, 200, 220, 0.3);
+        }
+
+        .time-container:nth-child(even)::before {
+            background: #fff;
+            box-shadow: 0 0 0 4px var(--secondary-color), 0 0 0 8px rgba(224, 195, 252, 0.3);
+        }
+
+        .time-container:nth-child(3n)::before {
+            background: #fff;
+            box-shadow: 0 0 0 4px var(--accent-color), 0 0 0 8px rgba(252, 224, 195, 0.3);
+        }
+
+        .time-container:nth-child(4n)::before {
+            background: #fff;
+            box-shadow: 0 0 0 4px var(--timeline-color), 0 0 0 8px rgba(195, 240, 252, 0.3);
+        }
+
+        .time-container:nth-child(5n)::before {
+            background: #fff;
+            box-shadow: 0 0 0 4px var(--mint-color), 0 0 0 8px rgba(195, 252, 215, 0.3);
+        }
+
+        .time-content {
+            padding: 20px 25px;
+            background: #fff;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .time-content:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        }
+
+        .time {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #ff79a8;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .time-content p {
+            line-height: 1.6;
+            font-size: 1rem;
+        }
+
+        /* Footer Styles */
+        footer {
+            text-align: center;
+            padding: 30px 20px;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(8px);
+        }
+
+        .footer-heart {
+            color: #ff79a8;
+            display: inline-block;
+            animation: heartBeat 1.5s infinite;
+        }
+
+        /* Animations */
+        @keyframes pulse {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes floatHeart {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.6;
+            }
+            90% {
+                opacity: 0.6;
+            }
+            100% {
+                transform: translateY(-1000%) rotate(720deg);
+                opacity: 0;
+            }
+        }
+
+        @keyframes heartBeat {
+            0% {
+                transform: scale(1);
+            }
+            14% {
+                transform: scale(1.3);
+            }
+            28% {
+                transform: scale(1);
+            }
+            42% {
+                transform: scale(1.3);
+            }
+            70% {
+                transform: scale(1);
+            }
+        }
+
+        /* Responsive Styles */
+        @media screen and (max-width: 768px) {
+            .landing h1 {
+                font-size: 2rem;
+            }
+
+            .timeline::before {
+                left: 31px;
+            }
+
+            .time-container {
+                padding-left: 60px;
+            }
+
+            .time-container::before {
+                left: 25px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="toggle-container">
+            <button class="toggle-btn active" id="weekday">Wochentag</button>
+            <button class="toggle-btn" id="holiday">Feiertag</button>
+        </div>
+    </header>
+
+    <section class="landing" id="landing">
+        <h1>Ein Tag mit dir, wenn wir zusammen leben würden</h1>
+        <p>Eine kleine Vorstellung unseres gemeinsamen Lebens, von Morgen bis Abend, voller Liebe und kleiner Momente, die unser Leben besonders machen würden.</p>
+        <button class="heart-btn" id="startBtn">Los geht's ❤️</button>
+        
+        <div class="floating-hearts" id="floating-hearts"></div>
+    </section>
+
+    <section class="timeline-section" id="timeline">
+        <div class="timeline" id="weekday-timeline">
+            <!-- Weekday Timeline will be populated by JavaScript -->
+        </div>
+        
+        <div class="timeline" id="holiday-timeline" style="display: none;">
+            <!-- Holiday Timeline will be populated by JavaScript -->
+        </div>
+    </section>
+
+    <footer>
+        <p>Made with <span class="footer-heart">❤️</span> by Ali Malik for Aylin Seibold <span class="footer-heart">❤️</span></p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Create floating hearts
+            const floatingHearts = document.getElementById('floating-hearts');
+            const heartEmojis = ['❤️', '💕', '💖', '💗', '💓', '💘', '💝'];
+            
+            for (let i = 0; i < 20; i++) {
+                createHeart();
+            }
+            
+            function createHeart() {
+                const heart = document.createElement('div');
+                heart.classList.add('heart');
+                heart.innerHTML = heartEmojis[Math.floor(Math.random() * heartEmojis.length)];
+                heart.style.left = Math.random() * 100 + 'vw';
+                heart.style.animationDuration = 15 + Math.random() * 10 + 's';
+                heart.style.animationDelay = Math.random() * 5 + 's';
+                heart.style.opacity = Math.random() * 0.5 + 0.3;
+                floatingHearts.appendChild(heart);
+                
+                // Remove and recreate hearts for performance
+                setTimeout(() => {
+                    heart.remove();
+                    createHeart();
+                }, 25000);
+            }
+            
+            // Smooth scroll to timeline
+            document.getElementById('startBtn').addEventListener('click', function() {
+                document.getElementById('timeline').scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Toggle between weekday and holiday
+            const weekdayBtn = document.getElementById('weekday');
+            const holidayBtn = document.getElementById('holiday');
+            const weekdayTimeline = document.getElementById('weekday-timeline');
+            const holidayTimeline = document.getElementById('holiday-timeline');
+            
+            weekdayBtn.addEventListener('click', function() {
+                weekdayBtn.classList.add('active');
+                holidayBtn.classList.remove('active');
+                weekdayTimeline.style.display = 'block';
+                holidayTimeline.style.display = 'none';
+            });
+            
+            holidayBtn.addEventListener('click', function() {
+                holidayBtn.classList.add('active');
+                weekdayBtn.classList.remove('active');
+                holidayTimeline.style.display = 'block';
+                weekdayTimeline.style.display = 'none';
+            });
+
+            // Define timeline data
+            const weekdayData = [
+                {
+                    time: '🕡 6:30',
+                    content: 'Wir wachen auf, ich dreh mich zu dir, küsse deine Stirn und flüstre dir ein verschlafenes "Guten Morgen, meine Schöne" ins Ohr. Dein Lächeln ist das Erste, was ich an jedem Tag sehen möchte.'
+                },
+                {
+                    time: '🕖 7:00',
+                    content: 'Während du noch etwas döst, bereite ich leise das Frühstück vor - dein Lieblingstee steht schon bereit, wenn du in die Küche kommst. Ein Kuss im Vorbeigehen, während wir uns für den Tag fertig machen.'
+                },
+                {
+                    time: '🕗 8:00',
+                    content: 'Wir frühstücken zusammen (Pfannkuchen), teilen unsere Pläne für den Tag und sprechen darüber, wovon wir geträumt haben. Bevor wir das Haus verlassen, ein letzter Kuss und ein "Ich vermisse dich jetzt schon".'
+                },
+                {
+                    time: '🕙 10:00',
+                    content: 'Zwischen zwei Meetings schicke ich dir eine Nachricht: "Denke gerade an dich und unser gemeinsames Abendessen heute ❤️". Diese kleinen Momente der Verbundenheit, selbst wenn wir räumlich getrennt sind, sind das A und O in unserer Beziehung.'
+                },
+                {
+                    time: '🕛 12:00',
+                    content: 'Mittagspause. Manchmal können wir telefonieren, wenn wir beide Zeit haben. Deine Stimme zu hören macht meinen Tag besser, egal wie stressig er ist. Deine Stimme ist wie eine Therapie für mich.'
+                },
+                {
+                    time: '🕒 15:00',
+                    content: 'Ich sende dir ein Foto von etwas, das mich an dich erinnert hat - vielleicht eine Blume auf dem Weg oder etwas in deiner Lieblingsfarbe. Die kleinen Dinge im Leben, die mich immer zu dir zurückführen.'
+                },
+                {
+                    time: '🕔 17:00',
+                    content: 'Auf dem Heimweg überlege ich, was wir zusammen kochen könnten. Vielleicht kaufe ich noch frische Blumen oder deine lieblings Snacks, um dir eine Freude zu machen.'
+                },
+                {
+                    time: '🕕 18:00',
+                    content: 'Endlich wieder zusammen! Der Moment, wenn sich unsere Augen treffen, nachdem wir den Tag getrennt verbracht haben - unbezahlbar. Wir umarmen uns lange, als müssten wir die verlorene Zeit nachholen.'
+                },
+                {
+                    time: '🕢 18:30',
+                    content: 'Gemeinsam kochen wir Abendessen, mit Musik im Hintergrund. Du tanzt manchmal in der Küche, und ich kann nicht anders, als dich zu mir zu ziehen und mit dir zu tanzen, zwischen Gemüseschneiden und Kochtöpfen.'
+                },
+                {
+                    time: '🕖 19:00',
+                    content: 'Wir essen zusammen, teilen die Erlebnisse des Tages, lachen über kleine Missgeschicke und machen Pläne für das Wochenende. Diese gemeinsamen Mahlzeiten sind der perfekte Ausgleich für einen hektischen Tag.'
+                },
+                {
+                    time: '🕗 20:00',
+                    content: 'Nach dem Aufräumen kuscheln wir uns auf die Couch, vielleicht mit einem Film oder einem Buch. Ich liebe es, wenn du deinen Kopf auf meine Schulter legst und wir einfach zusammen sind.'
+                },
+                {
+                    time: '🕙 22:00',
+                    content: 'Wir machen uns langsam bettfertig. Vielleicht nehmen wir ein gemeinsames Bad oder ich massiere deinen Rücken, um dir bei der Entspannung zu helfen.'
+                },
+                {
+                    time: '🕚 23:00',
+                    content: 'Im Bett liegen wir noch ein wenig wach, reden leise über alles und nichts. Manchmal machen wir Pläne für unsere Zukunft, träumen von Reisen oder einfach von weiteren schönen Tagen wie diesem.. oder machen bissl Sport im Bett.'
+                },
+                {
+                    time: '🕛 00:00',
+                    content: 'Ein letzter Kuss vor dem Einschlafen. "Ich liebe dich", flüstere ich, während ich meinen Arm um dich lege. Mit dem Gefühl von Geborgenheit und Liebe schlafen wir ein, um morgen wieder einen wundervollen Tag miteinander zu verbringen.'
+                }
+            ];
+            
+            const holidayData = [
+                {
+                    time: '🕘 9:00',
+                    content: 'Wir schlafen aus und wachen langsam in den Sonnenstrahlen auf, die durch die Vorhänge fallen. Kein Wecker, keine Eile - nur wir zwei, verschlafen und glücklich. Ich ziehe dich näher zu mir und genieße die Wärme deines Körpers.'
+                },
+                {
+                    time: '🕙 10:00',
+                    content: 'Ich schleiche mich aus dem Bett, um dir Frühstück ans Bett zu bringen. Frisch gepresster Orangensaft, fluffige Pancakes mit Beeren und etwas Kaffee - ein perfekter Start in unseren gemeinsamen freien Tag.'
+                },
+                {
+                    time: '🕚 11:00',
+                    content: 'Wir verbringen den Morgen faul im Bett, lesen, reden, lachen, kuscheln. Keine Verpflichtungen, keine Eile - nur kostbare gemeinsame Zeit, die wir an geschäftigen Tagen so vermissen.'
+                },
+                {
+                    time: '🕛 12:00',
+                    content: 'Vielleicht entscheiden wir uns für einen Spaziergang im Park oder besuchen den kleinen Markt in der Nähe. Hand in Hand schlendern wir, bleiben stehen für einen spontanen Kuss zwischendurch, kaufen frische Blumen für unser Zuhause.'
+                },
+                {
+                    time: '🕝 13:30',
+                    content: 'Wir brunchen in unserem Lieblingscafé, teilen Gerichte und Geschichten. Ich liebe es, dich lachen zu sehen, wenn ich von meinen verrückten Ideen erzähle, und wie du mich unter dem Tisch mit deinem Fuß berührst.'
+                },
+                {
+                    time: '🕒 15:00',
+                    content: 'Zurück zu Hause blättern wir vielleicht in alten Fotoalben oder planen unseren nächsten Urlaub. Wir träumen von Orten, die wir zusammen sehen wollen, und Abenteuern, die vor uns liegen.'
+                },
+                {
+                    time: '🕓 16:00',
+                    content: 'Zeit für eine Überraschung! Vielleicht habe ich Tickets für eine Veranstaltung, die du sehen wolltest, oder ein kleines Geschenk, das ich schon lange für dich aufbewahrt habe. Dein strahlendes Lächeln ist alle Mühe wert.'
+                },
+                {
+                    time: '🕔 17:00',
+                    content: 'Wir machen es uns auf dem Balkon oder im Garten gemütlich, mit einem Glas Kaffe oder Eistee, je nach Wetter. Reden über alles und nichts, oder sitzen einfach in angenehmer Stille nebeneinander.'
+                },
+                {
+                    time: '🕕 18:00',
+                    content: 'Gemeinsam bereiten wir ein besonderes Abendessen zu - vielleicht ein Rezept, das wir schon lange ausprobieren wollten. Wir kochen zusammen, probieren, lachen über kleine Küchenpannen und stehlen uns Küsse zwischendurch.'
+                },
+                {
+                    time: '🕢 19:30',
+                    content: 'Dinner bei Kerzenlicht, mit deiner Lieblingsmusik im Hintergrund. Wir stoßen an auf uns (natürlich nicht mit Wein oder Alkohol), auf die Liebe, auf die kleinen Momente, die unser Leben so besonders machen.'
+                },
+                {
+                    time: '🕘 21:00',
+                    content: 'Vielleicht tanzen wir in unserem Wohnzimmer, langsam und eng umschlungen, als wären wir die einzigen Menschen auf der Welt. Ich singe leise in dein Ohr, auch wenn meine Stimme nicht perfekt ist.'
+                },
+                {
+                    time: '🕙 22:00',
+                    content: 'Wir kuscheln auf der Couch mit einem Film oder einem Brettspiel - mit viel Lachen und spielerischen Neckereien. Diese entspannten Momente der Nähe sind unbezahlbar.'
+                },
+                {
+                    time: '🕚 23:00',
+                    content: 'Ein gemeinsames Bad bei Kerzenschein und duftenden Ölen. Ich wasche sanft dein Haar und massiere deine Schultern, während wir über unsere Träume sprechen.'
+                },
+                {
+                    time: '🕚 23:30',
+                    content: 'Nach unserem Bad ziehen wir uns um und setzen die Helme auf – bereit für einen spontanen Ausflug auf unseren Motorrädern. Die Straßen sind ruhig, die Lichter der Stadt spiegeln sich auf dem Asphalt, und mit jedem Kilometer wächst das Gefühl von Freiheit. Du fährst voraus, drehst dich immer wieder zu mir um, und ich könnte ewig so hinter dir herfahren – durch die Nacht, durch unser gemeinsames Leben.'
+                },
+                {
+                    time: '🕛 00:30',
+                    content: 'Zurückgekehrt legen wir unsere Jacken ab, noch ganz erfüllt vom Adrenalin. Die Welt scheint still geworden zu sein. Wir setzen uns ans Fenster, beobachten die Stadt unter dem Sternenhimmel. Die Luft ist wärmer als gedacht, aber trägt doch eine gewisse Schwere – wie als würde sie selbst wissen, dass diese Nacht etwas Besonderes ist.'
+                },
+                {
+                    time: '🕐 01:00',
+                    content: 'Wir liegen im Bett, eng aneinandergeschmiegt. Unsere Küsse werden langsamer, bewusster, tiefer. Keine Worte mehr nötig – nur Blicke, Berührungen, Nähe. Die Stimmung ist vertraut und aufgeladen zugleich. In dieser Nacht, fernab von Alltag und Zeit, gehören wir nur einander. Und schließlich lassen wir uns voll und ganz auf diesen Moment ein – sanft, leidenschaftlich, ganz bei uns.'
+                },
+                {
+                    time: '🕝 02:00',
+                    content: 'Erfüllt von Nähe und Vertrauen liegen wir schließlich still nebeneinander. Deine Hand liegt auf meiner Brust, mein Atem wird ruhig. Noch ein letzter Kuss auf deine Stirn, bevor wir einschlafen – mit dem sicheren Gefühl, geliebt und angekommen zu sein.'
+                }
+            ];
+
+            // Populate timelines
+            function populateTimeline(timelineElement, data) {
+                timelineElement.innerHTML = '';
+                data.forEach(item => {
+                    const timeContainer = document.createElement('div');
+                    timeContainer.classList.add('time-container');
+                    
+                    timeContainer.innerHTML = `
+                        <div class="time-content">
+                            <div class="time">${item.time}</div>
+                            <p>${item.content}</p>
+                        </div>
+                    `;
+                    
+                    timelineElement.appendChild(timeContainer);
+                });
+            }
+            
+            populateTimeline(weekdayTimeline, weekdayData);
+            populateTimeline(holidayTimeline, holidayData);
+            
+            // Animate timeline items on scroll
+            function checkScroll() {
+                const timeContainers = document.querySelectorAll('.time-container');
+                
+                timeContainers.forEach(container => {
+                    const containerTop = container.getBoundingClientRect().top;
+                    const windowHeight = window.innerHeight;
+                    
+                    if (containerTop < windowHeight - 100) {
+                        container.classList.add('animate');
+                    }
+                });
+            }
+            
+            window.addEventListener('scroll', checkScroll);
+            // Initial check to animate visible elements
+            setTimeout(checkScroll, 300);
+        });
+    </script>
+</body>
+</html>

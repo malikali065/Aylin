@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Unsere gemeinsame Zeit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="../assets/faviconc.png">
+    <style>
+        /* Globale Stile */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Quicksand', sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #ffe6e6 0%, #ffb6c1 100%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            overflow-x: hidden;
+            position: relative;
+            padding: 20px;
+        }
+
+        /* Container für den Hauptinhalt */
+        .container {
+            width: 100%;
+            max-width: 600px;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 25px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            position: relative;
+            z-index: 10;
+            margin-bottom: 20px;
+        }
+
+        /* Hauptüberschrift */
+        h1 {
+            color: #333;
+            margin-bottom: 25px;
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        /* Button Styling */
+        .btn {
+            background: linear-gradient(to right, #ff8bab, #ff5c8a);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1rem;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            box-shadow: 0 4px 15px rgba(255, 92, 138, 0.3);
+            margin: 20px 0;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 92, 138, 0.4);
+        }
+
+        .btn:active {
+            transform: translateY(1px);
+        }
+
+        /* Lade-Balken Container */
+        .progress-container {
+            width: 100%;
+            height: 20px;
+            background-color: #f0f0f0;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+            position: relative;
+            display: none;
+        }
+
+        /* Lade-Balken */
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background: linear-gradient(to right, #ffb6c1, #ff69b4);
+            border-radius: 10px;
+            transition: width 0.05s ease;
+            position: relative;
+        }
+
+        /* Herz am Ende des Ladebalkens */
+        .heart-loader {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 18px;
+        }
+
+        /* Anpassungen für Countdown-Tab */
+        .countdown-progress-bar {
+            background: linear-gradient(to right, #f7d6e0, #efd3b9);
+        }
+
+        /* Ergebnisbereich */
+        .result {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+
+        .time-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .time-item {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease;
+        }
+
+        .time-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .time-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #ff5c8a;
+            margin-bottom: 5px;
+        }
+
+        .countdown .time-value {
+            color: #f0a48e;
+        }
+
+        .time-label {
+            font-size: 0.9rem;
+            color: #888;
+        }
+
+        /* Schwebende Herzen/Symbole */
+        .floating-symbol {
+            position: absolute;
+            font-size: 20px;
+            color: rgba(255, 182, 193, 0.7);
+            animation: float 15s linear infinite;
+            z-index: 1;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translateY(100vh) scale(1);
+                opacity: 0.7;
+            }
+            100% {
+                transform: translateY(-100px) scale(1.2);
+                opacity: 0;
+            }
+        }
+
+        /* Liebesbotschaften / Briefe */
+        .note {
+            position: absolute;
+            bottom: -100px;
+            background-color: white;
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 250px;
+            text-align: center;
+            z-index: 5;
+            font-size: 0.9rem;
+            animation: flyUp 6s ease-in-out forwards;
+            opacity: 0;
+        }
+
+        .note:before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-left: 10px solid transparent;
+            border-right: 10px solid transparent;
+            border-top: 10px solid white;
+        }
+
+        @keyframes flyUp {
+            0% {
+                transform: translateY(0);
+                opacity: 0;
+            }
+            20% {
+                opacity: 1;
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-300px);
+                opacity: 0;
+            }
+        }
+
+        /* Tab-Navigation */
+        .tabs {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 10px;
+        }
+
+        .tab-btn {
+            background-color: rgba(255, 255, 255, 0.5);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            background-color: white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Responsive Anpassungen */
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+
+            .time-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .time-value {
+                font-size: 1.5rem;
+            }
+
+            .btn {
+                padding: 10px 25px;
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="time">Zeit zusammen</button>
+            <button class="tab-btn" data-tab="countdown">Countdown</button>
+        </div>
+
+        <div class="tab-content active" id="time-tab">
+            <h1>So lange sind wir schon zusammen</h1>
+            <button class="btn" id="calculateBtn">Ausrechnen</button>
+            
+            <div class="progress-container" id="timeProgressContainer">
+                <div class="progress-bar" id="timeProgressBar">
+                    <span class="heart-loader">❤️</span>
+                </div>
+            </div>
+            
+            <div class="result" id="timeResult">
+                <h2>Unsere gemeinsame Zeit</h2>
+                <div class="time-container">
+                    <div class="time-item">
+                        <div class="time-value" id="years">0</div>
+                        <div class="time-label">Jahre</div>
+                    </div>
+                    <div class="time-item">
+                        <div class="time-value" id="months">0</div>
+                        <div class="time-label">Monate</div>
+                    </div>
+                    <div class="time-item">
+                        <div class="time-value" id="days">0</div>
+                        <div class="time-label">Tage</div>
+                    </div>
+                    <div class="time-item">
+                        <div class="time-value" id="hours">0</div>
+                        <div class="time-label">Stunden</div>
+                    </div>
+                    <div class="time-item">
+                        <div class="time-value" id="minutes">0</div>
+                        <div class="time-label">Minuten</div>
+                    </div>
+                    <div class="time-item">
+                        <div class="time-value" id="seconds">0</div>
+                        <div class="time-label">Sekunden</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-content" id="countdown-tab">
+            <h1>Noch bis zu unserem Jubiläum</h1>
+            <button class="btn" id="countdownBtn">Countdown starten</button>
+            
+            <div class="progress-container" id="countdownProgressContainer">
+                <div class="progress-bar countdown-progress-bar" id="countdownProgressBar">
+                    <span class="heart-loader">🎂</span>
+                </div>
+            </div>
+            
+            <div class="result countdown" id="countdownResult">
+                <h2>Zeit bis zum 1. Jahrestag</h2>
+                <div class="time-container">
+                    <div class="time-item">
+                        <div class="time-value" id="cd-days">0</div>
+                        <div class="time-label">Tage</div>
+                    </div>
+                    <div class="time-item">
+                        <div class="time-value" id="cd-hours">0</div>
+                        <div class="time-label">Stunden</div>
+                    </div>
+                    <div class="time-item">
+                        <div class="time-value" id="cd-minutes">0</div>
+                        <div class="time-label">Minuten</div>
+                    </div>
+                    <div class="time-item">
+                        <div class="time-value" id="cd-seconds">0</div>
+                        <div class="time-label">Sekunden</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Startdatum der Beziehung
+        const startDate = new Date('2025-02-23T14:30:00');
+        
+        // Datum des ersten Jahrestags - Hier kannst du das Datum ändern
+        const anniversaryDate = new Date('2026-02-22T14:30:00');
+        
+        // DOM-Elemente für Zeit-Tab
+        const calculateBtn = document.getElementById('calculateBtn');
+        const timeProgressContainer = document.getElementById('timeProgressContainer');
+        const timeProgressBar = document.getElementById('timeProgressBar');
+        const timeResult = document.getElementById('timeResult');
+        
+        // DOM-Elemente für Countdown-Tab
+        const countdownBtn = document.getElementById('countdownBtn');
+        const countdownProgressContainer = document.getElementById('countdownProgressContainer');
+        const countdownProgressBar = document.getElementById('countdownProgressBar');
+        const countdownResult = document.getElementById('countdownResult');
+        
+        // Zeitelemente - Zeit zusammen
+        const yearsElement = document.getElementById('years');
+        const monthsElement = document.getElementById('months');
+        const daysElement = document.getElementById('days');
+        const hoursElement = document.getElementById('hours');
+        const minutesElement = document.getElementById('minutes');
+        const secondsElement = document.getElementById('seconds');
+        
+        // Zeitelemente - Countdown
+        const cdDaysElement = document.getElementById('cd-days');
+        const cdHoursElement = document.getElementById('cd-hours');
+        const cdMinutesElement = document.getElementById('cd-minutes');
+        const cdSecondsElement = document.getElementById('cd-seconds');
+        
+        // Tabs-Elemente
+        const tabBtns = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        
+        // Liebesbotschaften für Zeit-Tab
+        const loveMessages = [
+            "Du bist mein Lieblingsmensch",
+            "Ich liebe dich mehr jeden Tag",
+            "Danke für alles",
+            "Für immer mit dir",
+            "Jeder Moment mit dir ist besonders",
+            "Du machst mich so glücklich",
+            "Ich bin so dankbar für dich",
+            "Mit dir ist alles schöner",
+            "Du bist mein Ein und Alles",
+            "Ich freue mich auf unsere Zukunft"
+        ];
+        
+        // Vorfreude-Botschaften für Countdown-Tab
+        const countdownMessages = [
+            "Bald ist unser Jubiläum!",
+            "Ich kann es kaum erwarten",
+            "Ein Jahr voller Liebe",
+            "Das erste von vielen Jahren",
+            "Auf viele weitere Erinnerungen",
+            "Bald wird gefeiert!",
+            "Unsere Liebe wird immer stärker",
+            "Ein Jahr und es fühlt sich an wie gestern",
+            "Ich liebe dich mehr als je zuvor",
+            "Auf das nächste wundervolle Jahr"
+        ];
+        
+        // Tracking für aktiven Tab
+        let activeTab = 'time';
+        
+        // Intervallfunktionen
+        let timeInterval;
+        let countdownInterval;
+        let notesInterval;
+        
+        // Event-Listener für die Tabs
+        tabBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tabId = btn.getAttribute('data-tab');
+                
+                // Update Tab-Status
+                tabBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                tabContents.forEach(content => content.classList.remove('active'));
+                document.getElementById(`${tabId}-tab`).classList.add('active');
+                
+                // Setze aktiven Tab
+                activeTab = tabId;
+                
+                // Entferne alle schwebenden Symbole und Notizen
+                clearNotes();
+                
+                // Füge neue Symbole hinzu
+                createFloatingSymbols();
+                
+                // Stoppe aktuelle Notizen-Animation
+                if (notesInterval) {
+                    clearInterval(notesInterval);
+                }
+            });
+        });
+        
+        // Event-Listener für den Zeit-Button
+        calculateBtn.addEventListener('click', startTimeCalculation);
+        
+        // Event-Listener für den Countdown-Button
+        countdownBtn.addEventListener('click', startCountdownCalculation);
+        
+        // Funktion zum Starten der Zeit-Berechnung mit Ladebalken
+        function startTimeCalculation() {
+            // Button ausblenden und Ladebalken anzeigen
+            calculateBtn.style.display = 'none';
+            timeProgressContainer.style.display = 'block';
+            
+            let progress = 0;
+            const loadingInterval = setInterval(() => {
+                progress += 1;
+                timeProgressBar.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(loadingInterval);
+                    timeProgressContainer.style.display = 'none';
+                    timeResult.style.display = 'block';
+                    
+                    // Starte die Zeitberechnung und Updates
+                    updateTimeElapsed();
+                    if (timeInterval) clearInterval(timeInterval);
+                    timeInterval = setInterval(updateTimeElapsed, 1000);
+                    
+                    // Starte die Animation der Liebesbotschaften
+                    if (notesInterval) clearInterval(notesInterval);
+                    showNotes('love');
+                }
+            }, 20); // 20ms * 100 = ungefähr 2 Sekunden Ladezeit
+        }
+        
+        // Funktion zum Starten der Countdown-Berechnung mit Ladebalken
+        function startCountdownCalculation() {
+            // Button ausblenden und Ladebalken anzeigen
+            countdownBtn.style.display = 'none';
+            countdownProgressContainer.style.display = 'block';
+            
+            let progress = 0;
+            const loadingInterval = setInterval(() => {
+                progress += 1;
+                countdownProgressBar.style.width = `${progress}%`;
+                
+                if (progress >= 100) {
+                    clearInterval(loadingInterval);
+                    countdownProgressContainer.style.display = 'none';
+                    countdownResult.style.display = 'block';
+                    
+                    // Starte den Countdown und Updates
+                    updateCountdown();
+                    if (countdownInterval) clearInterval(countdownInterval);
+                    countdownInterval = setInterval(updateCountdown, 1000);
+                    
+                    // Starte die Animation der Countdown-Botschaften
+                    if (notesInterval) clearInterval(notesInterval);
+                    showNotes('countdown');
+                }
+            }, 20); // 20ms * 100 = ungefähr 2 Sekunden Ladezeit
+        }
+        
+        // Berechnet die vergangene Zeit und aktualisiert die Anzeige
+        function updateTimeElapsed() {
+            const now = new Date();
+            const timeDiff = now - startDate;
+            
+            // Berechnung der Zeiteinheiten für Sekunden, Minuten und Stunden
+            const secondsTotal = Math.floor(timeDiff / 1000);
+            const minutesTotal = Math.floor(secondsTotal / 60);
+            const hoursTotal = Math.floor(minutesTotal / 60);
+            
+            // Berechnung der angezeigten Werte
+            const seconds = secondsTotal % 60;
+            const minutes = minutesTotal % 60;
+            const hours = hoursTotal % 24;
+            
+            // Exakte Berechnung von Jahren, Monaten und Tagen
+            let years = 0;
+            let months = 0;
+            let days = 0;
+            
+            // Kopie des Startdatums erstellen, um damit zu arbeiten
+            const tempDate = new Date(startDate);
+            
+            // Jahre berechnen
+            while (true) {
+                const nextYear = new Date(tempDate);
+                nextYear.setFullYear(nextYear.getFullYear() + 1);
+                
+                if (nextYear <= now) {
+                    years++;
+                    tempDate.setFullYear(tempDate.getFullYear() + 1);
+                } else {
+                    break;
+                }
+            }
+            
+            // Monate berechnen
+            while (true) {
+                const nextMonth = new Date(tempDate);
+                nextMonth.setMonth(nextMonth.getMonth() + 1);
+                
+                if (nextMonth <= now) {
+                    months++;
+                    tempDate.setMonth(tempDate.getMonth() + 1);
+                } else {
+                    break;
+                }
+            }
+            
+            // Tage berechnen
+            while (true) {
+                const nextDay = new Date(tempDate);
+                nextDay.setDate(nextDay.getDate() + 1);
+                
+                if (nextDay <= now) {
+                    days++;
+                    tempDate.setDate(tempDate.getDate() + 1);
+                } else {
+                    break;
+                }
+            }
+            
+            // Aktualisierung der Anzeige
+            yearsElement.textContent = years;
+            monthsElement.textContent = months;
+            daysElement.textContent = days;
+            hoursElement.textContent = hours;
+            minutesElement.textContent = minutes;
+            secondsElement.textContent = seconds;
+        }
+        
+        // Berechnet die Zeit bis zum Jubiläum und aktualisiert die Anzeige
+        function updateCountdown() {
+            const now = new Date();
+            const timeDiff = anniversaryDate - now;
+            
+            // Falls das Jubiläum bereits vorbei ist
+            if (timeDiff <= 0) {
+                cdDaysElement.textContent = "0";
+                cdHoursElement.textContent = "0";
+                cdMinutesElement.textContent = "0";
+                cdSecondsElement.textContent = "0";
+                return;
+            }
+            
+            // Berechnung der Zeiteinheiten
+            const secondsTotal = Math.floor(timeDiff / 1000);
+            const minutesTotal = Math.floor(secondsTotal / 60);
+            const hoursTotal = Math.floor(minutesTotal / 60);
+            const daysTotal = Math.floor(hoursTotal / 24);
+            
+            // Berechnung der angezeigten Werte
+            const seconds = secondsTotal % 60;
+            const minutes = minutesTotal % 60;
+            const hours = hoursTotal % 24;
+            
+            // Aktualisierung der Anzeige
+            cdDaysElement.textContent = daysTotal;
+            cdHoursElement.textContent = hours;
+            cdMinutesElement.textContent = minutes;
+            cdSecondsElement.textContent = seconds;
+        }
+        
+        // Erstellt und zeigt schwebende Symbole im Hintergrund an (Herzen oder andere Symbole, je nach Tab)
+        function createFloatingSymbols() {
+            const body = document.body;
+            const symbolCount = 15; // Anzahl der Symbole
+            const symbol = activeTab === 'time' ? '❤' : '✨';
+            
+            // Entferne zuerst alle existierenden Symbole
+            document.querySelectorAll('.floating-symbol').forEach(el => el.remove());
+            
+            for (let i = 0; i < symbolCount; i++) {
+                const floatingSymbol = document.createElement('div');
+                floatingSymbol.classList.add('floating-symbol');
+                floatingSymbol.innerHTML = symbol;
+                
+                // Zufällige Position, Größe und Animationsverzögerung
+                const left = Math.random() * 100; // Prozent
+                const size = Math.random() * (1.5 - 0.5) + 0.5; // Größenskalierung zwischen 0.5 und 1.5
+                const delay = Math.random() * 15; // Verzögerung bis zu 15 Sekunden
+                const duration = Math.random() * (25 - 15) + 15; // Animationsdauer zwischen 15 und 25 Sekunden
+                
+                floatingSymbol.style.left = `${left}%`;
+                floatingSymbol.style.fontSize = `${size * 20}px`;
+                floatingSymbol.style.opacity = `${Math.random() * 0.5 + 0.2}`; // Transparenz zwischen 0.2 und 0.7
+                floatingSymbol.style.animationDelay = `${delay}s`;
+                floatingSymbol.style.animationDuration = `${duration}s`;
+                
+                // Farbe je nach Tab anpassen
+                if (activeTab === 'countdown') {
+                    floatingSymbol.style.color = 'rgba(239, 211, 185, 0.7)'; // Pastellfarbe für Countdown
+                }
+                
+                body.appendChild(floatingSymbol);
+            }
+        }
+        
+        // Entfernt alle existierenden Notizen
+        function clearNotes() {
+            document.querySelectorAll('.note').forEach(note => note.remove());
+        }
+        
+        // Zeigt Botschaften als fliegende Notizen an, je nach aktivem Tab
+        function showNotes(type) {
+            const messages = type === 'love' ? loveMessages : countdownMessages;
+            
+            // Zeige regelmäßig neue Nachrichten
+            notesInterval = setInterval(() => {
+                showNotesBatch(messages);
+            }, 15000); // Alle 15 Sekunden neue Nachrichten
+            
+            // Zeige sofort die erste Gruppe von Nachrichten
+            showNotesBatch(messages);
+        }
+        
+        // Zeigt eine Gruppe von Nachrichten an
+        function showNotesBatch(messages) {
+            let delay = 1000; // Startverzögerung von 1 Sekunde
+            
+            // Shuffeln der Nachrichten für zufällige Reihenfolge
+            const shuffledMessages = [...messages].sort(() => Math.random() - 0.5);
+            
+            // Zeige 5 Nachrichten im Abstand von 2 Sekunden
+            for (let i = 0; i < Math.min(5, shuffledMessages.length); i++) {
+                setTimeout(() => {
+                    createNote(shuffledMessages[i]);
+                }, delay);
+                delay += 2000; // 2 Sekunden zwischen den Nachrichten
+            }
+        }
+        
+        // Erstellt eine einzelne Notiz
+        function createNote(message) {
+            const note = document.createElement('div');
+            note.classList.add('note');
+            note.textContent = message;
+            
+            // Zufällige horizontale Position
+            const left = Math.random() * 70 + 15; // Zwischen 15% und 85%
+            note.style.left = `${left}%`;
+            
+            document.body.appendChild(note);
+            
+            // Entferne die Nachricht nach der Animation
+            setTimeout(() => {
+                if (note.parentNode) {
+                    document.body.removeChild(note);
+                }
+            }, 6000); // Nach 6 Sekunden (Animationsdauer)
+        }
+        
+        // Initialisierung beim Laden der Seite
+        window.addEventListener('load', () => {
+            createFloatingSymbols();
+        });
+    </script>
+</body>
+</html>
